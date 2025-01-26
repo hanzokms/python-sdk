@@ -15,16 +15,31 @@ from .infisical_requests import InfisicalRequests
 from .api_types import ListSecretsResponse, MachineIdentityLoginResponse
 from .api_types import SingleSecretResponse, BaseSecret
 
+from .crypto import (
+    create_symmetric_key_helper,
+    decrypt_symmetric_helper,
+    encrypt_symmetric_helper,
+)
+
 
 class InfisicalSDKClient:
-    def __init__(self, host: str, token: str = None):
+    def __init__(self, host: str = None, token: str = None):
+        
+        if host is None:
+            host = "https://app.infisical.com"
+
         self.host = host
+
+        if host.endswith("/api"):
+            host = host[:-4]
+
         self.access_token = token
 
         self.api = InfisicalRequests(host=host, token=token)
 
         self.auth = Auth(self)
         self.secrets = V3RawSecrets(self)
+        self.crypto = Cryptography(self)
 
     def set_token(self, token: str):
         """
@@ -343,3 +358,22 @@ class V3RawSecrets:
         )
 
         return result.data.secret
+
+
+class Cryptography:
+    def __init__(self, client: InfisicalSDKClient) -> None:
+        self.client = client
+
+    def create_symmetric_key(self) -> str:
+        """Create a base64-encoded, 256-bit symmetric key"""
+        return create_symmetric_key_helper()
+
+    def encrypt_symmetric(self, plaintext: str, key: str):
+        """Encrypt the plaintext `plaintext` with the (base64) 256-bit secret key `key`"""
+        return encrypt_symmetric_helper(plaintext, key)
+
+    def decrypt_symmetric(self, ciphertext: str, key: str, iv: str, tag: str):
+        """Decrypt the ciphertext `ciphertext` with the (base64) 256-bit secret key `key`,
+        provided `iv` and `tag`"""
+
+        return decrypt_symmetric_helper(ciphertext, key, iv, tag)
