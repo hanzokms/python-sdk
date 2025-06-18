@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Optional, Dict, Any
 
 from infisical_sdk.infisical_requests import InfisicalRequests
 from infisical_sdk.api_types import ListSecretsResponse, SingleSecretResponse, BaseSecret
@@ -14,14 +14,15 @@ class V3RawSecrets:
 
     def list_secrets(
             self,
-            project_id: str,
             environment_slug: str,
             secret_path: str,
+            project_id: str = None,
             expand_secret_references: bool = True,
             view_secret_value: bool = True,
             recursive: bool = False,
             include_imports: bool = True,
-            tag_filters: List[str] = []) -> ListSecretsResponse:
+            tag_filters: List[str] = [],
+            project_slug: str = None) -> ListSecretsResponse:
 
         params = {
             "workspaceId": project_id,
@@ -31,6 +32,7 @@ class V3RawSecrets:
             "expandSecretReferences": str(expand_secret_references).lower(),
             "recursive": str(recursive).lower(),
             "include_imports": str(include_imports).lower(),
+            "workspaceSlug": project_slug
         }
 
         if tag_filters:
@@ -58,9 +60,10 @@ class V3RawSecrets:
     def get_secret_by_name(
             self,
             secret_name: str,
-            project_id: str,
             environment_slug: str,
             secret_path: str,
+            project_id: str = None,
+            project_slug: str = None,
             expand_secret_references: bool = True,
             include_imports: bool = True,
             view_secret_value: bool = True,
@@ -68,6 +71,7 @@ class V3RawSecrets:
 
         params = {
           "workspaceId": project_id,
+          "workspaceSlug": project_slug,
           "viewSecretValue": str(view_secret_value).lower(),
           "environment": environment_slug,
           "secretPath": secret_path,
@@ -105,26 +109,32 @@ class V3RawSecrets:
     def create_secret_by_name(
             self,
             secret_name: str,
-            project_id: str,
             secret_path: str,
             environment_slug: str,
+            project_id: str = None,
             secret_value: str = None,
             secret_comment: str = None,
             skip_multiline_encoding: bool = False,
             secret_reminder_repeat_days: Union[float, int] = None,
-            secret_reminder_note: str = None) -> BaseSecret:
+            secret_reminder_note: str = None,
+            project_slug: str = None,
+            secret_metadata: Optional[List[Dict[str, Any]]] = None,
+            tags_ids: Optional[List[str]] = None,
+            ) -> BaseSecret:
 
         requestBody = {
           "workspaceId": project_id,
+          "projectSlug": project_slug,
           "environment": environment_slug,
           "secretPath": secret_path,
           "secretValue": secret_value,
           "secretComment": secret_comment,
-          "tagIds": None,
+          "tagIds": tags_ids,
           "skipMultilineEncoding": skip_multiline_encoding,
           "type": "shared",
           "secretReminderRepeatDays": secret_reminder_repeat_days,
-          "secretReminderNote": secret_reminder_note
+          "secretReminderNote": secret_reminder_note,
+          "secretMetadata": secret_metadata,
         }
         result = self.requests.post(
             path=f"/api/v3/secrets/raw/{secret_name}",
@@ -152,28 +162,34 @@ class V3RawSecrets:
     def update_secret_by_name(
         self,
         current_secret_name: str,
-        project_id: str,
         secret_path: str,
         environment_slug: str,
+        project_id: str = None,
         secret_value: str = None,
         secret_comment: str = None,
         skip_multiline_encoding: bool = False,
         secret_reminder_repeat_days: Union[float, int] = None,
         secret_reminder_note: str = None,
-        new_secret_name: str = None) -> BaseSecret:
+        new_secret_name: str = None,
+        project_slug: str = None,
+        secret_metadata: Optional[List[Dict[str, Any]]] = None,
+        tags_ids: Optional[List[str]] = None,
+        ) -> BaseSecret:
 
         requestBody = {
           "workspaceId": project_id,
+          "projectSlug": project_slug,
           "environment": environment_slug,
           "secretPath": secret_path,
           "secretValue": secret_value,
           "secretComment": secret_comment,
           "newSecretName": new_secret_name,
-          "tagIds": None,
+          "tagIds": tags_ids,
           "skipMultilineEncoding": skip_multiline_encoding,
           "type": "shared",
           "secretReminderRepeatDays": secret_reminder_repeat_days,
-          "secretReminderNote": secret_reminder_note
+          "secretReminderNote": secret_reminder_note,
+          "secretMetadata": secret_metadata,
         }
 
         result = self.requests.patch(
@@ -201,12 +217,14 @@ class V3RawSecrets:
     def delete_secret_by_name(
             self,
             secret_name: str,
-            project_id: str,
             secret_path: str,
-            environment_slug: str) -> BaseSecret:
+            environment_slug: str,
+            project_id: str = None,
+            project_slug: str = None) -> BaseSecret:
 
         requestBody = {
           "workspaceId": project_id,
+          "projectSlug": project_slug,
           "environment": environment_slug,
           "secretPath": secret_path,
           "type": "shared",
