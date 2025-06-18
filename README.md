@@ -109,6 +109,7 @@ secrets = client.secrets.list_secrets(
 
 **Parameters:**
 - `project_id` (str): The ID of your project.
+- `project_slug` (str): The slug of your project.
 - `environment_slug` (str): The environment in which to list secrets (e.g., "dev").
 - `secret_path` (str): The path to the secrets.
 - `expand_secret_references` (bool): Whether to expand secret references.
@@ -116,6 +117,8 @@ secrets = client.secrets.list_secrets(
 - `recursive` (bool): Whether to list secrets recursively.
 - `include_imports` (bool): Whether to include imported secrets.
 - `tag_filters` (List[str]): Tags to filter secrets.
+
+**Note:** Exactly one of `project_id` or `project_slug` is required. If both are provided, `project_id` takes precedence.
 
 **Returns:**
 - `ListSecretsResponse`: The response containing the list of secrets.
@@ -133,12 +136,15 @@ new_secret = client.secrets.create_secret_by_name(
     skip_multiline_encoding=False,
     secret_reminder_repeat_days=30,  # Optional
     secret_reminder_note="Remember to update this secret"  # Optional
+    secret_metadata=[{"key": "metadata_key", "value": "metadata_value"}], # Optional
+    tags_ids=["tag_id_1", "tag_id_2"] # Optional
 )
 ```
 
 **Parameters:**
 - `secret_name` (str): The name of the secret.
 - `project_id` (str): The ID of your project.
+- `project_slug` (str): The slug of your project.
 - `secret_path` (str): The path to the secret.
 - `environment_slug` (str): The environment in which to create the secret.
 - `secret_value` (str): The value of the secret.
@@ -146,6 +152,10 @@ new_secret = client.secrets.create_secret_by_name(
 - `skip_multiline_encoding` (bool, optional): Whether to skip encoding for multiline secrets.
 - `secret_reminder_repeat_days` (Union[float, int], optional): Number of days after which to repeat secret reminders.
 - `secret_reminder_note` (str, optional): A note for the secret reminder.
+- `secret_metadata` (List[Dict[str, Any]], optional): Metadata associated with the secret.
+- `tags_ids` (List[str], optional): IDs of tags to associate with the secret.
+
+**Note:** Exactly one of `project_id` or `project_slug` is required. If both are provided, `project_id` takes precedence.
 
 **Returns:**
 - `BaseSecret`: The response after creating the secret.
@@ -156,6 +166,7 @@ new_secret = client.secrets.create_secret_by_name(
 updated_secret = client.secrets.update_secret_by_name(
     current_secret_name="EXISTING_SECRET",
     project_id="<project-id>",
+    project_slug="<project-slug>",
     secret_path="/",
     environment_slug="dev",
     secret_value="new_secret_value",
@@ -164,12 +175,15 @@ updated_secret = client.secrets.update_secret_by_name(
     secret_reminder_repeat_days=30,  # Optional
     secret_reminder_note="Updated reminder note",  # Optional
     new_secret_name="NEW_NAME"  # Optional
+    secret_metadata=[{"key": "metadata_key", "value": "metadata_value"}], # Optional
+    tags_ids=["tag_id_1", "tag_id_2"] # Optional
 )
 ```
 
 **Parameters:**
 - `current_secret_name` (str): The current name of the secret.
 - `project_id` (str): The ID of your project.
+- `project_slug` (str): The slug of your project.
 - `secret_path` (str): The path to the secret.
 - `environment_slug` (str): The environment in which to update the secret.
 - `secret_value` (str, optional): The new value of the secret.
@@ -178,6 +192,10 @@ updated_secret = client.secrets.update_secret_by_name(
 - `secret_reminder_repeat_days` (Union[float, int], optional): Updated number of days after which to repeat secret reminders.
 - `secret_reminder_note` (str, optional): An updated note for the secret reminder.
 - `new_secret_name` (str, optional): A new name for the secret.
+- `secret_metadata` (List[Dict[str, Any]], optional): Metadata associated with the secret.
+- `tags_ids` (List[str], optional): IDs of tags to associate with the secret.
+
+**Note:** Exactly one of `project_id` or `project_slug` is required. If both are provided, `project_id` takes precedence.
 
 **Returns:**
 - `BaseSecret`: The response after updating the secret.
@@ -200,12 +218,15 @@ secret = client.secrets.get_secret_by_name(
 **Parameters:**
 - `secret_name` (str): The name of the secret.
 - `project_id` (str): The ID of your project.
+- `project_slug` (str): The slug of your project.
 - `environment_slug` (str): The environment in which to retrieve the secret.
 - `secret_path` (str): The path to the secret.
 - `expand_secret_references` (bool): Whether to expand secret references.
 - `view_secret_value` (bool): Whether or not to include the secret value in the response. If set to false, the `secretValue` will be masked with `<hidden-by-infisical>`. Defaults to true.
 - `include_imports` (bool): Whether to include imported secrets.
 - `version` (str, optional): The version of the secret to retrieve. Fetches the latest by default.
+
+**Note:** Exactly one of `project_id` or `project_slug` is required. If both are provided, `project_id` takes precedence.
 
 **Returns:**
 - `BaseSecret`: The response containing the secret.
@@ -224,8 +245,11 @@ deleted_secret = client.secrets.delete_secret_by_name(
 **Parameters:**
 - `secret_name` (str): The name of the secret to delete.
 - `project_id` (str): The ID of your project.
+- `project_slug` (str): The slug of your project.
 - `environment_slug` (str): The environment in which to delete the secret.
 - `secret_path` (str): The path to the secret.
+
+**Note:** Exactly one of `project_id` or `project_slug` is required. If both are provided, `project_id` takes precedence.
 
 **Returns:**
 - `BaseSecret`: The response after deleting the secret.
