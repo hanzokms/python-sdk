@@ -35,6 +35,9 @@ class V3RawSecrets:
             "workspaceSlug": project_slug
         }
 
+        if project_slug is None and project_id is None:
+            raise ValueError("project_slug or project_id must be provided")
+
         if tag_filters:
             params["tagSlugs"] = ",".join(tag_filters)
 
@@ -79,6 +82,9 @@ class V3RawSecrets:
           "include_imports": str(include_imports).lower(),
           "version": version
         }
+
+        if project_slug is None and project_id is None:
+            raise ValueError("project_slug or project_id must be provided")
 
         cache_params = {
            "project_id": project_id,
@@ -136,6 +142,10 @@ class V3RawSecrets:
           "secretReminderNote": secret_reminder_note,
           "secretMetadata": secret_metadata,
         }
+
+        if project_slug is None and project_id is None:
+            raise ValueError("project_slug or project_id must be provided")
+
         result = self.requests.post(
             path=f"/api/v3/secrets/raw/{secret_name}",
             json=requestBody,
@@ -192,6 +202,9 @@ class V3RawSecrets:
           "secretMetadata": secret_metadata,
         }
 
+        if project_slug is None and project_id is None:
+            raise ValueError("project_slug or project_id must be provided")
+
         result = self.requests.patch(
             path=f"/api/v3/secrets/raw/{current_secret_name}",
             json=requestBody,
@@ -221,6 +234,9 @@ class V3RawSecrets:
             environment_slug: str,
             project_id: str = None,
             project_slug: str = None) -> BaseSecret:
+
+        if project_slug is None and project_id is None:
+            raise ValueError("project_slug or project_id must be provided")
 
         requestBody = {
           "workspaceId": project_id,
