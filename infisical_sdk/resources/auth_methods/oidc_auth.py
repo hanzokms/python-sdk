@@ -14,7 +14,7 @@ class OidcAuth:
 
         Args:
             identity_id (str): Your Machine Identity ID.
-            jwt (str): Your JWT.
+            jwt (str): Your OIDC JWT.
 
         Returns:
             Dict: A dictionary containing the access token and related information.
