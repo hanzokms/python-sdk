@@ -17,7 +17,7 @@ class OidcAuth:
             jwt (str): Your OIDC JWT.
 
         Returns:
-            Dict: A dictionary containing the access token and related information.
+            MachineIdentityLoginResponse: A response object containing the access token and related information.
         """
 
         requestBody = {
