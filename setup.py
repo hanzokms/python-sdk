@@ -32,7 +32,7 @@ setup(
     author="Infisical",
     author_email="support@infisical.com",
     url="https://github.com/Infisical/python-sdk-official",
-    keywords=["Infisical", "Infisical API", "Infisical SDK", "SDK", "Secrets Management",],
+    keywords=["Infisical", "Infisical API", "Infisical SDK", "SDK", "Secrets Management"],
     install_requires=REQUIRES,
     packages=find_packages(exclude=["test", "tests"]),
     include_package_data=True,
