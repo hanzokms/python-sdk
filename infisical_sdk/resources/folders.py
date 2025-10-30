@@ -38,7 +38,7 @@ class V2Folders:
             project_id: str,
             environment_slug: str,
             path: str,
-            lastSecretModified: Optional[datetime] = None,
+            last_secret_modified: Optional[datetime] = None,
             recursive: bool = False) -> ListFoldersResponse:
 
         params = {
@@ -48,10 +48,10 @@ class V2Folders:
             "recursive": recursive,
         }
 
-        if lastSecretModified is not None:
+        if last_secret_modified is not None:
             # Convert to UTC and format as RFC 3339 with 'Z' suffix
             # The API expects UTC times in 'Z' format (e.g., 2023-11-07T05:31:56Z)
-            utc_datetime = lastSecretModified.astimezone(timezone.utc) if lastSecretModified.tzinfo else lastSecretModified.replace(tzinfo=timezone.utc)
+            utc_datetime = last_secret_modified.astimezone(timezone.utc) if last_secret_modified.tzinfo else last_secret_modified.replace(tzinfo=timezone.utc)
             params["lastSecretModified"] = utc_datetime.strftime('%Y-%m-%dT%H:%M:%SZ')
 
         result = self.requests.get(
@@ -66,13 +66,8 @@ class V2Folders:
             self,
             id: str) -> SingleFolderResponseItem:
 
-        params = {
-            "id": id,
-        }
-
         result = self.requests.get(
             path=f"/api/v2/folders/{id}",
-            params=params,
             model=SingleFolderResponse
         )
 
