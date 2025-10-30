@@ -194,3 +194,102 @@ class KmsKeyEncryptDataResponse(BaseModel):
 class KmsKeyDecryptDataResponse(BaseModel):
     """Response model for decrypt data API"""
     plaintext: str
+
+@dataclass
+class CreateFolderResponseItem(BaseModel):
+    """Folder model with path for create response"""
+    id: str
+    name: str
+    createdAt: str
+    updatedAt: str
+    envId: str
+    path: str
+    version: Optional[int] = 1
+    parentId: Optional[str] = None
+    isReserved: Optional[bool] = False
+    description: Optional[str] = None
+    lastSecretModified: Optional[str] = None
+
+@dataclass
+class CreateFolderResponse(BaseModel):
+    """Response model for create folder API"""
+    folder: CreateFolderResponseItem
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'CreateFolderResponse':
+        return cls(
+            folder=CreateFolderResponseItem.from_dict(data['folder']),
+        )
+
+
+@dataclass
+class ListFoldersResponseItem(BaseModel):
+    """Response model for list folders API"""
+    id: str
+    name: str
+    createdAt: str
+    updatedAt: str
+    envId: str
+    version: Optional[int] = 1
+    parentId: Optional[str] = None
+    isReserved: Optional[bool] = False
+    description: Optional[str] = None
+    lastSecretModified: Optional[str] = None 
+    relativePath: Optional[str] = None
+
+
+@dataclass
+class ListFoldersResponse(BaseModel):
+    """Complete response model for folders API"""
+    folders: List[ListFoldersResponseItem]
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'ListFoldersResponse':
+        """Create model from dictionary with camelCase keys, handling nested objects"""
+        return cls(
+            folders=[ListFoldersResponseItem.from_dict(folder) for folder in data['folders']]
+        )
+
+
+@dataclass
+class Environment(BaseModel):
+    """Environment model"""
+    envId: str
+    envName: str
+    envSlug: str
+
+@dataclass
+class SingleFolderResponseItem(BaseModel):
+    """Response model for get folder API"""
+    id: str
+    name: str
+    createdAt: str
+    updatedAt: str
+    envId: str
+    path: str
+    projectId: str
+    environment: Environment
+    version: Optional[int] = 1
+    parentId: Optional[str] = None
+    isReserved: Optional[bool] = False
+    description: Optional[str] = None
+    lastSecretModified: Optional[str] = None
+    
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'SingleFolderResponseItem':
+        """Create model from dictionary with nested Environment"""
+        folder_data = data.copy()
+        folder_data['environment'] = Environment.from_dict(data['environment'])
+        
+        return super().from_dict(folder_data)
+
+@dataclass
+class SingleFolderResponse(BaseModel):
+    """Response model for get/create folder API"""
+    folder: SingleFolderResponseItem
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'SingleFolderResponse':
+        return cls(
+            folder=SingleFolderResponseItem.from_dict(data['folder']),
+        )
