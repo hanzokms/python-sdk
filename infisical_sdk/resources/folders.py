@@ -1,5 +1,5 @@
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 from infisical_sdk.infisical_requests import InfisicalRequests
 from infisical_sdk.api_types import ListFoldersResponse, SingleFolderResponse, SingleFolderResponseItem, CreateFolderResponse, CreateFolderResponseItem
@@ -15,7 +15,7 @@ class V2Folders:
             environment_slug: str,
             project_id: str,
             path: str = "/",
-            description: str = None) -> CreateFolderResponseItem:
+            description: Optional[str] = None) -> CreateFolderResponseItem:
 
         request_body = {
             "projectId": project_id,
@@ -49,12 +49,10 @@ class V2Folders:
         }
 
         if lastSecretModified is not None:
-            # Format as RFC 3339 (ISO 8601 profile) - uses 'Z' for UTC
-            # Workaround for the zod datetime() validation in the API
-            iso_string = lastSecretModified.isoformat(timespec='seconds')
-            if iso_string.endswith('+00:00'):
-                iso_string = iso_string[:-6] + 'Z'
-            params["lastSecretModified"] = iso_string
+            # Convert to UTC and format as RFC 3339 with 'Z' suffix
+            # The API expects UTC times in 'Z' format (e.g., 2023-11-07T05:31:56Z)
+            utc_datetime = lastSecretModified.astimezone(timezone.utc) if lastSecretModified.tzinfo else lastSecretModified.replace(tzinfo=timezone.utc)
+            params["lastSecretModified"] = utc_datetime.strftime('%Y-%m-%dT%H:%M:%SZ')
 
         result = self.requests.get(
             path="/api/v2/folders",
