@@ -3,6 +3,7 @@ from .infisical_requests import InfisicalRequests
 from infisical_sdk.resources import Auth
 from infisical_sdk.resources import V3RawSecrets
 from infisical_sdk.resources import KMS
+from infisical_sdk.resources import V2Folders
 
 from infisical_sdk.util import SecretsCache
 
@@ -24,6 +25,7 @@ class InfisicalSDKClient:
         self.auth = Auth(self.api, self.set_token)
         self.secrets = V3RawSecrets(self.api, self.cache)
         self.kms = KMS(self.api)
+        self.folders = V2Folders(self.api)
 
     def set_token(self, token: str):
         """
