@@ -11,4 +11,4 @@ class Auth:
         self.aws_auth = AWSAuth(requests, setToken)
         self.universal_auth = UniversalAuth(requests, setToken)
         self.oidc_auth = OidcAuth(requests, setToken)
-        self.token_auth = TokenAuth(requests, setToken)
+        self.token_auth = TokenAuth(setToken)
