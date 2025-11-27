@@ -1,9 +1,7 @@
 from typing import Callable
-from infisical_sdk.infisical_requests import InfisicalRequests
 
 class TokenAuth:
-    def __init__(self, requests: InfisicalRequests, setToken: Callable[[str], None]):
-        self.requests = requests
+    def __init__(self, setToken: Callable[[str], None]):
         self.setToken = setToken
 
     def login(self, token: str) -> str:
