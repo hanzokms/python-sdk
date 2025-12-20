@@ -365,6 +365,15 @@ class DynamicSecretLease(BaseModel):
     config: Optional[Any] = None
     dynamicSecret: Optional[DynamicSecret] = None
 
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'DynamicSecretLease':
+        """Create model from dictionary with nested DynamicSecret"""
+        lease_data = data.copy()
+        if 'dynamicSecret' in data and data['dynamicSecret'] is not None:
+            lease_data['dynamicSecret'] = DynamicSecret.from_dict(data['dynamicSecret'])
+        
+        return super().from_dict(lease_data)
+
 @dataclass
 class CreateLeaseResponse(BaseModel):
     """Response model for create lease API - returns lease, dynamicSecret, and data"""
