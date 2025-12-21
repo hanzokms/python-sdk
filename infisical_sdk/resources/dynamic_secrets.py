@@ -281,40 +281,49 @@ class DynamicSecrets:
             name: str,
             project_slug: str,
             environment_slug: str,
-            data: Dict[str, Any],
             path: str = "/",
-            default_ttl: str = None,
-            max_ttl: str = None,
-            new_name: str = None,
-            inputs: Dict[str, Any] = None,
-            metadata: Optional[List[Dict[str, str]]] = None) -> DynamicSecret:
+            default_ttl: Optional[str] = None,
+            max_ttl: Optional[str] = None,
+            new_name: Optional[str] = None,
+            inputs: Optional[Dict[str, Any]] = None,
+            metadata: Optional[List[Dict[str, str]]] = None,
+            username_template: Optional[str] = None) -> DynamicSecret:
         """Update an existing dynamic secret.
 
         Args:
             name: The current name of the dynamic secret.
             project_slug: The slug of the project.
             environment_slug: The slug of the environment.
-            data: The provider-specific configuration to update.
             path: The path to the dynamic secret. Defaults to "/".
             default_ttl: The new default time to live for leases (e.g., "1h").
             max_ttl: The new maximum time to live for leases (e.g., "24h").
             new_name: The new name for the dynamic secret.
-            inputs: Updated provider inputs.
+            inputs: Updated provider-specific configuration inputs.
             metadata: Updated metadata list with 'key' and 'value' items.
+            username_template: The new username template for the dynamic secret.
 
         Returns:
             The updated dynamic secret.
         """
+        data: Dict[str, Any] = {}
+        if inputs is not None:
+            data["inputs"] = inputs
+        if default_ttl is not None:
+            data["defaultTTL"] = default_ttl
+        if max_ttl is not None:
+            data["maxTTL"] = max_ttl
+        if new_name is not None:
+            data["newName"] = new_name
+        if metadata is not None:
+            data["metadata"] = metadata
+        if username_template is not None:
+            data["usernameTemplate"] = username_template
+
         request_body = {
             "projectSlug": project_slug,
             "environmentSlug": environment_slug,
-            "data": data,
             "path": path,
-            "defaultTTL": default_ttl,
-            "maxTTL": max_ttl,
-            "newName": new_name,
-            "inputs": inputs,
-            "metadata": metadata,
+            "data": data,
         }
 
         result = self.requests.patch(
