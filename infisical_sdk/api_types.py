@@ -332,10 +332,7 @@ class DynamicSecret(BaseModel):
     maxTTL: Optional[str] = None
     status: Optional[str] = None
     statusDetails: Optional[str] = None
-    projectGatewayId: Optional[str] = None
-    gatewayId: Optional[str] = None
     usernameTemplate: Optional[str] = None
-    gatewayV2Id: Optional[str] = None
     metadata: Optional[List[Dict[str, str]]] = field(default_factory=list)
     inputs: Optional[Any] = None
 
@@ -362,7 +359,6 @@ class DynamicSecretLease(BaseModel):
     externalEntityId: str
     status: Optional[str] = None
     statusDetails: Optional[str] = None
-    config: Optional[Any] = None
     dynamicSecret: Optional[DynamicSecret] = None
 
     @classmethod
