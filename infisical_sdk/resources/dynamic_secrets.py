@@ -1,5 +1,4 @@
 from typing import Optional, Dict, Any, List, Union
-from urllib.parse import quote
 
 from infisical_sdk.infisical_requests import InfisicalRequests
 from infisical_sdk.api_types import (
@@ -53,24 +52,24 @@ class DynamicSecretLeases:
 
         return result.data
 
-    def delete(
+    def revoke(
             self,
             lease_id: str,
             project_slug: str,
             environment_slug: str,
             path: str = "/",
             is_forced: bool = False) -> DynamicSecretLease:
-        """Delete a dynamic secret lease.
+        """Revoke a dynamic secret lease.
 
         Args:
-            lease_id: The ID of the lease to delete.
+            lease_id: The ID of the lease to revoke.
             project_slug: The slug of the project.
             environment_slug: The slug of the environment.
             path: The path to the dynamic secret. Defaults to "/".
             is_forced: A boolean flag to delete the the dynamic secret from Infisical without trying to remove it from external provider. Used when the dynamic secret got modified externally.
 
         Returns:
-            The deleted lease.
+            The revoked lease.
         """
         request_body = {
             "projectSlug": project_slug,
@@ -80,7 +79,7 @@ class DynamicSecretLeases:
         }
 
         result = self.requests.delete(
-            path=f"/api/v1/dynamic-secrets/leases/{quote(lease_id, safe='')}",
+            path=f"/api/v1/dynamic-secrets/leases/{lease_id}",
             json=request_body,
             model=SingleLeaseResponse
         )
@@ -114,7 +113,7 @@ class DynamicSecretLeases:
         }
 
         result = self.requests.post(
-            path=f"/api/v1/dynamic-secrets/leases/{quote(lease_id, safe='')}/renew",
+            path=f"/api/v1/dynamic-secrets/leases/{lease_id}/renew",
             json=request_body,
             model=SingleLeaseResponse
         )
@@ -145,7 +144,7 @@ class DynamicSecretLeases:
         }
 
         result = self.requests.get(
-            path=f"/api/v1/dynamic-secrets/leases/{quote(lease_id, safe='')}",
+            path=f"/api/v1/dynamic-secrets/leases/{lease_id}",
             params=params,
             model=SingleLeaseResponse
         )
@@ -238,7 +237,7 @@ class DynamicSecrets:
         }
 
         result = self.requests.delete(
-            path=f"/api/v1/dynamic-secrets/{quote(name, safe='')}",
+            path=f"/api/v1/dynamic-secrets/{name}",
             json=request_body,
             model=SingleDynamicSecretResponse
         )
@@ -269,7 +268,7 @@ class DynamicSecrets:
         }
 
         result = self.requests.get(
-            path=f"/api/v1/dynamic-secrets/{quote(name, safe='')}",
+            path=f"/api/v1/dynamic-secrets/{name}",
             params=params,
             model=SingleDynamicSecretResponse
         )
@@ -327,7 +326,7 @@ class DynamicSecrets:
         }
 
         result = self.requests.patch(
-            path=f"/api/v1/dynamic-secrets/{quote(name, safe='')}",
+            path=f"/api/v1/dynamic-secrets/{name}",
             json=request_body,
             model=SingleDynamicSecretResponse
         )
