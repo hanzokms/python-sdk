@@ -293,3 +293,105 @@ class SingleFolderResponse(BaseModel):
         return cls(
             folder=SingleFolderResponseItem.from_dict(data['folder']),
         )
+
+class DynamicSecretProviders(str, Enum):
+    """Enum for dynamic secret provider types"""
+    AWS_ELASTICACHE = "aws-elasticache"
+    AWS_IAM = "aws-iam"
+    AZURE_ENTRA_ID = "azure-entra-id"
+    AZURE_SQL_DATABASE = "azure-sql-database"
+    CASSANDRA = "cassandra"
+    COUCHBASE = "couchbase"
+    ELASTICSEARCH = "elastic-search"
+    GCP_IAM = "gcp-iam"
+    GITHUB = "github"
+    KUBERNETES = "kubernetes"
+    LDAP = "ldap"
+    MONGO_ATLAS = "mongo-db-atlas"
+    MONGODB = "mongo-db"
+    RABBITMQ = "rabbit-mq"
+    REDIS = "redis"
+    SAP_ASE = "sap-ase"
+    SAP_HANA = "sap-hana"
+    SNOWFLAKE = "snowflake"
+    SQL_DATABASE = "sql-database"
+    TOTP = "totp"
+    VERTICA = "vertica"
+
+@dataclass
+class DynamicSecret(BaseModel):
+    """Infisical Dynamic Secret"""
+    id: str
+    name: str
+    version: int
+    type: str
+    folderId: str
+    createdAt: str
+    updatedAt: str
+    defaultTTL: Optional[str] = None
+    maxTTL: Optional[str] = None
+    status: Optional[str] = None
+    statusDetails: Optional[str] = None
+    usernameTemplate: Optional[str] = None
+    metadata: Optional[List[Dict[str, str]]] = field(default_factory=list)
+    inputs: Optional[Any] = None
+
+@dataclass
+class SingleDynamicSecretResponse(BaseModel):
+    """Response model for get/create/update/delete dynamic secret API"""
+    dynamicSecret: DynamicSecret
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'SingleDynamicSecretResponse':
+        return cls(
+            dynamicSecret=DynamicSecret.from_dict(data['dynamicSecret']),
+        )
+
+@dataclass
+class DynamicSecretLease(BaseModel):
+    """Infisical Dynamic Secret Lease"""
+    id: str
+    expireAt: str
+    createdAt: str
+    updatedAt: str
+    version: int
+    dynamicSecretId: str
+    externalEntityId: str
+    status: Optional[str] = None
+    statusDetails: Optional[str] = None
+    dynamicSecret: Optional[DynamicSecret] = None
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'DynamicSecretLease':
+        """Create model from dictionary with nested DynamicSecret"""
+        lease_data = data.copy()
+        if 'dynamicSecret' in data and data['dynamicSecret'] is not None:
+            lease_data['dynamicSecret'] = DynamicSecret.from_dict(data['dynamicSecret'])
+        
+        return super().from_dict(lease_data)
+
+@dataclass
+class CreateLeaseResponse(BaseModel):
+    """Response model for create lease API - returns lease, dynamicSecret, and data"""
+    lease: DynamicSecretLease
+    dynamicSecret: DynamicSecret
+    data: Any
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'CreateLeaseResponse':
+        return cls(
+            lease=DynamicSecretLease.from_dict(data['lease']),
+            dynamicSecret=DynamicSecret.from_dict(data['dynamicSecret']),
+            data=data.get('data', {}),
+        )
+
+@dataclass
+class SingleLeaseResponse(BaseModel):
+    """Response model for get/delete/renew lease API - returns only lease"""
+    lease: DynamicSecretLease
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'SingleLeaseResponse':
+        return cls(
+            lease=DynamicSecretLease.from_dict(data['lease']),
+        )
