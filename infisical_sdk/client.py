@@ -46,9 +46,9 @@ class InfisicalSDKClient:
         """
         Close the client and release resources.
         
-        This stops the background cache cleanup thread. Call this method when
-        you're done using the client, or use the client as a context manager.
-        Note that this is only necessary if you are not using the client as a context manager, and if secret caching is enabled.
+        This stops the background cache cleanup thread. You don't need to call
+        this if you're using the client as a context manager (with statement),
+        as cleanup happens automatically when exiting the context.
         """
         if self.cache:
             self.cache.close()
