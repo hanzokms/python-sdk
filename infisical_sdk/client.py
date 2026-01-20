@@ -38,7 +38,29 @@ class InfisicalSDKClient:
 
     def get_token(self):
         """
-        Set the access token for future requests.
+        Get the access token for future requests.
         """
         return self.access_token
 
+    def close(self):
+        """
+        Close the client and release resources.
+        
+        This stops the background cache cleanup thread. You don't need to call
+        this if you're using the client as a context manager (with statement),
+        as cleanup happens automatically when exiting the context.
+        """
+        if self.cache:
+            self.cache.close()
+
+    # These are automatically called if using the client as a context manager (on start)
+    # Example:
+    # with InfisicalSDKClient(...) as client:
+    # ...  
+    def __enter__(self) -> "InfisicalSDKClient":
+        """Support for context manager protocol."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+        """Ensure cleanup when exiting context."""
+        self.close()
