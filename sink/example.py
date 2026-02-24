@@ -1,4 +1,4 @@
-from infisical_sdk import InfisicalSDKClient, SymmetricEncryption
+from hanzo_kms import KMSClient, SymmetricEncryption
 
 import random
 import base64
@@ -19,7 +19,7 @@ def loadEnvVarsFromFileIntoEnv():
 
 loadEnvVarsFromFileIntoEnv()
 
-sdkInstance = InfisicalSDKClient(host=os.getenv("SITE_URL"))
+sdkInstance = KMSClient(host=os.getenv("SITE_URL"))
 
 
 SECRETS_PROJECT_ID = os.getenv("SECRETS_PROJECT_ID")

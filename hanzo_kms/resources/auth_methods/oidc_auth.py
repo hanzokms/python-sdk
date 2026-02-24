@@ -1,10 +1,10 @@
-from infisical_sdk.api_types import MachineIdentityLoginResponse
+from hanzo_kms.api_types import MachineIdentityLoginResponse
 
 from typing import Callable
-from infisical_sdk.infisical_requests import InfisicalRequests
+from hanzo_kms.kms_requests import KMSRequests
 
 class OidcAuth:
-    def __init__(self, requests: InfisicalRequests, setToken: Callable[[str], None]):
+    def __init__(self, requests: KMSRequests, setToken: Callable[[str], None]):
         self.requests = requests
         self.setToken = setToken
 

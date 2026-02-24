@@ -1,4 +1,4 @@
-from infisical_sdk import InfisicalSDKClient
+from hanzo_kms import KMSClient
 
 import time
 import os
@@ -24,7 +24,7 @@ MACHINE_IDENTITY_UNIVERSAL_AUTH_CLIENT_ID = os.getenv("MACHINE_IDENTITY_UNIVERSA
 MACHINE_IDENTITY_UNIVERSAL_AUTH_CLIENT_SECRET = os.getenv("MACHINE_IDENTITY_UNIVERSAL_AUTH_CLIENT_SECRET")
 SITE_URL = os.getenv("SITE_URL")
 
-cache_enabled_client = InfisicalSDKClient(host=SITE_URL, cache_ttl=10)
+cache_enabled_client = KMSClient(host=SITE_URL, cache_ttl=10)
 cache_enabled_client.auth.universal_auth.login(MACHINE_IDENTITY_UNIVERSAL_AUTH_CLIENT_ID, MACHINE_IDENTITY_UNIVERSAL_AUTH_CLIENT_SECRET)
 
 

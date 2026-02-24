@@ -1,12 +1,12 @@
-from infisical_sdk.api_types import SymmetricEncryption, KmsKeysOrderBy, OrderDirection
-from infisical_sdk.api_types import ListKmsKeysResponse, SingleKmsKeyResponse
-from infisical_sdk.api_types import KmsKey, KmsKeyEncryptDataResponse, KmsKeyDecryptDataResponse
+from hanzo_kms.api_types import SymmetricEncryption, KmsKeysOrderBy, OrderDirection
+from hanzo_kms.api_types import ListKmsKeysResponse, SingleKmsKeyResponse
+from hanzo_kms.api_types import KmsKey, KmsKeyEncryptDataResponse, KmsKeyDecryptDataResponse
 
-from infisical_sdk.infisical_requests import InfisicalRequests
+from hanzo_kms.kms_requests import KMSRequests
 
 
 class KMS:
-    def __init__(self, requests: InfisicalRequests) -> None:
+    def __init__(self, requests: KMSRequests) -> None:
         self.requests = requests
 
     def list_keys(

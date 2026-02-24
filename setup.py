@@ -1,9 +1,9 @@
 # coding: utf-8
 
 """
-    Infisical SDK
+    Hanzo KMS SDK
 
-    List of all available APIs that can be consumed
+    Official Hanzo KMS Python SDK for secrets management, KMS, and dynamic secrets.
 """  # noqa: E501
 
 from setuptools import setup, find_packages  # noqa: H301
@@ -14,7 +14,7 @@ from setuptools import setup, find_packages  # noqa: H301
 #
 # prerequisite: setuptools
 # http://pypi.python.org/pypi/setuptools
-NAME = "infisicalsdk"
+NAME = "hanzokms"
 VERSION = "1.0.1"
 PYTHON_REQUIRES = ">=3.8"
 REQUIRES = [
@@ -28,18 +28,18 @@ REQUIRES = [
 setup(
     name=NAME,
     version=VERSION,
-    description="Official Infisical SDK for Python (Latest)",
-    author="Infisical",
-    author_email="support@infisical.com",
-    url="https://github.com/Infisical/python-sdk-official",
-    keywords=["Infisical", "Infisical API", "Infisical SDK", "SDK", "Secrets Management"],
+    description="Official Hanzo KMS Python SDK",
+    author="Hanzo AI Inc.",
+    author_email="support@hanzo.ai",
+    url="https://github.com/hanzokms/python-sdk",
+    keywords=["Hanzo", "KMS", "Hanzo KMS", "SDK", "Secrets Management"],
     install_requires=REQUIRES,
     packages=find_packages(exclude=["test", "tests"]),
     include_package_data=True,
     long_description_content_type='text/markdown',
     long_description="""\
-    The official Infisical SDK for Python.
-    Documentation can be found at https://github.com/Infisical/python-sdk-official
+    The official Hanzo KMS Python SDK.
+    Documentation can be found at https://github.com/hanzokms/python-sdk
     """,  # noqa: E501
-    package_data={"infisicalapi_client": ["py.typed"]},
+    package_data={"hanzo_kms": ["py.typed"]},
 )

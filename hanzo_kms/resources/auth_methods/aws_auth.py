@@ -2,8 +2,8 @@ from botocore.auth import SigV4Auth
 from botocore.awsrequest import AWSRequest
 from botocore.exceptions import NoCredentialsError
 
-from infisical_sdk.infisical_requests import InfisicalRequests
-from infisical_sdk.api_types import MachineIdentityLoginResponse
+from hanzo_kms.kms_requests import KMSRequests
+from hanzo_kms.api_types import MachineIdentityLoginResponse
 
 from typing import Callable
 
@@ -18,7 +18,7 @@ from typing import Dict, Any
 
 
 class AWSAuth:
-    def __init__(self, requests: InfisicalRequests, setToken: Callable[[str], None]) -> None:
+    def __init__(self, requests: KMSRequests, setToken: Callable[[str], None]) -> None:
         self.requests = requests
         self.setToken = setToken
 
@@ -33,11 +33,11 @@ class AWSAuth:
             Dict: A dictionary containing the access token and related information.
         """
 
-        identity_id = identity_id or os.getenv("INFISICAL_AWS_IAM_AUTH_IDENTITY_ID")
+        identity_id = identity_id or os.getenv("HANZO_KMS_AWS_IAM_AUTH_IDENTITY_ID")
         if not identity_id:
             raise ValueError(
-              "Identity ID must be provided or set in the environment variable" +
-              "INFISICAL_AWS_IAM_AUTH_IDENTITY_ID."
+              "Identity ID must be provided or set in the environment variable "
+              "HANZO_KMS_AWS_IAM_AUTH_IDENTITY_ID."
             )
 
         aws_region = self.get_aws_region()

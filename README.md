@@ -1,40 +1,81 @@
-<h1 align="center">
-  <img width="300" src="/img/logoname-white.svg#gh-dark-mode-only" alt="infisical">
-</h1>
-<p align="center">
-  <p align="center"><b>Infisical Python SDK</b></p>
-<h4 align="center">
-|
-  <a href="https://infisical.com/docs/sdks/languages/python">Documentation</a> |
-  <a href="https://www.infisical.com">Website</a> |
-  <a href="https://infisical.com/slack">Slack</a> |
-</h4>
+# Hanzo KMS Python SDK
 
-<h4 align="center">
-  <a href="https://github.com/Infisical/python-sdk-official/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Infisical SDK's are released under the MIT license." />
-  </a>
-  <a href="https://infisical.com/slack">
-    <img src="https://img.shields.io/badge/chat-on%20Slack-blueviolet" alt="Slack community channel" />
-  </a>
-  <a href="https://twitter.com/infisical">
-    <img src="https://img.shields.io/twitter/follow/infisical?label=Follow" alt="Infisical Twitter" />
-  </a>
-</h4>
+Official Python SDK for [Hanzo KMS](https://kms.hanzo.ai) -- secrets management, encryption keys, and dynamic secrets.
 
-## Introduction
+## Installation
 
-**[Infisical](https://infisical.com)** is the open source secret management platform that teams use to centralize their secrets like API keys, database credentials, and configurations.
+```bash
+pip install hanzokms
+```
 
-If you’re working with Python, the official Infisical Python SDK package is the easiest way to fetch and work with secrets for your application. You can read the documentation [here](https://infisical.com/docs/sdks/languages/python).
+## Quick Start
 
-## Documentation
-You can find the documentation for the Python SDK on our [SDK documentation page](https://infisical.com/docs/sdks/languages/python).
+```python
+from hanzo_kms import KMSClient
+
+# Initialize the client
+client = KMSClient(host="https://kms.hanzo.ai")
+
+# Authenticate with Universal Auth
+client.auth.universal_auth.login(
+    client_id="your-client-id",
+    client_secret="your-client-secret"
+)
+
+# List secrets
+secrets = client.secrets.list_secrets(
+    project_id="your-project-id",
+    environment_slug="production",
+    secret_path="/"
+)
+
+for secret in secrets.secrets:
+    print(f"{secret.secretKey}={secret.secretValue}")
+```
+
+## Authentication Methods
+
+- **Universal Auth** -- Machine identity client ID/secret
+- **Token Auth** -- Direct token authentication
+- **AWS IAM Auth** -- AWS IAM-based authentication
+- **OIDC Auth** -- OpenID Connect authentication
+- **LDAP Auth** -- LDAP username/password authentication
+
+## Features
+
+- **Secrets** -- CRUD operations on secrets with caching support
+- **KMS Keys** -- Create, manage, encrypt/decrypt with symmetric keys
+- **Folders** -- Organize secrets into folder hierarchies
+- **Dynamic Secrets** -- Provision short-lived credentials (databases, cloud providers, etc.)
+
+## Caching
+
+The SDK includes built-in secrets caching with configurable TTL:
+
+```python
+# Enable caching with 60-second TTL (default)
+client = KMSClient(host="https://kms.hanzo.ai", cache_ttl=60)
+
+# Disable caching
+client = KMSClient(host="https://kms.hanzo.ai", cache_ttl=None)
+```
+
+## Context Manager
+
+```python
+with KMSClient(host="https://kms.hanzo.ai", token="your-token") as client:
+    secrets = client.secrets.list_secrets(
+        project_id="your-project-id",
+        environment_slug="dev",
+        secret_path="/"
+    )
+# Resources automatically cleaned up
+```
+
+## License
+
+MIT -- Copyright (c) 2025 Hanzo AI Inc.
 
 ## Security
 
-Please do not file GitHub issues or post on our public forum for security vulnerabilities, as they are public!
-
-Infisical takes security issues very seriously. If you have any concerns about Infisical or believe you have uncovered a vulnerability, please get in touch via the e-mail address security@infisical.com. In the message, try to provide a description of the issue and ideally a way of reproducing it. The security team will get back to you as soon as possible.
-
-Note that this security address should be used only for undisclosed vulnerabilities. Please report any security problems to us before disclosing it publicly.
+If you discover a security vulnerability, please report it to security@hanzo.ai. Do not file public issues for security vulnerabilities.

@@ -30,12 +30,12 @@ def join_url(base: str, path: str) -> str:
         base += '/'
     return base + path.lstrip('/')
 
-class InfisicalError(Exception):
-    """Base exception for Infisical client errors"""
+class KMSError(Exception):
+    """Base exception for Hanzo KMS client errors"""
     pass
 
 
-class APIError(InfisicalError):
+class APIError(KMSError):
     """API-specific errors"""
     def __init__(self, message: str, status_code: int, response: Dict[str, Any]):
         self.status_code = status_code
@@ -68,8 +68,8 @@ class APIResponse(Generic[T]):
         )
 
 def with_retry(
-    max_retries: int = 3, 
-    base_delay: float = 1.0, 
+    max_retries: int = 3,
+    base_delay: float = 1.0,
     network_errors: Optional[List[Type[Exception]]] = None
 ) -> Callable:
     """
@@ -77,12 +77,12 @@ def with_retry(
     """
     if network_errors is None:
         network_errors = NETWORK_ERRORS
-        
+
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             retry_count = 0
-            
+
             while True:
                 try:
                     return func(*args, **kwargs)
@@ -90,21 +90,21 @@ def with_retry(
                     retry_count += 1
                     if retry_count > max_retries:
                         raise
-                    
+
                     base_delay_with_backoff = base_delay * (2 ** (retry_count - 1))
-                    
+
                     # +/-20% jitter
                     jitter = random.uniform(-0.2, 0.2) * base_delay_with_backoff
                     delay = base_delay_with_backoff + jitter
-                    
+
                     time.sleep(delay)
-        
+
         return wrapper
-    
+
     return decorator
 
 
-class InfisicalRequests:
+class KMSRequests:
     def __init__(self, host: str, token: Optional[str] = None):
         self.host = host.rstrip("/")
         self.session = requests.Session()
@@ -143,9 +143,9 @@ class InfisicalRequests:
                 response=error_data
             )
         except requests.exceptions.RequestException as e:
-            raise InfisicalError(f"Request failed: {str(e)}")
+            raise KMSError(f"Request failed: {str(e)}")
         except ValueError:
-            raise InfisicalError("Invalid JSON response")
+            raise KMSError("Invalid JSON response")
 
     @with_retry(max_retries=4, base_delay=1.0)
     def get(
@@ -232,7 +232,7 @@ class InfisicalRequests:
             json: Optional[Dict[str, Any]] = None
           ) -> APIResponse[T]:
 
-        """Make a PATCH request with JSON data"""
+        """Make a DELETE request with JSON data"""
 
         if json is not None:
             # Filter out None values

@@ -1,12 +1,12 @@
 from typing import Optional
 from datetime import datetime, timezone
 
-from infisical_sdk.infisical_requests import InfisicalRequests
-from infisical_sdk.api_types import ListFoldersResponse, SingleFolderResponse, SingleFolderResponseItem, CreateFolderResponse, CreateFolderResponseItem
+from hanzo_kms.kms_requests import KMSRequests
+from hanzo_kms.api_types import ListFoldersResponse, SingleFolderResponse, SingleFolderResponseItem, CreateFolderResponse, CreateFolderResponseItem
 
 
 class V2Folders:
-    def __init__(self, requests: InfisicalRequests) -> None:
+    def __init__(self, requests: KMSRequests) -> None:
         self.requests = requests
 
     def create_folder(
@@ -72,4 +72,3 @@ class V2Folders:
         )
 
         return result.data.folder
-
