@@ -1,14 +1,14 @@
 from typing import List, Union, Optional, Dict, Any
 
-from infisical_sdk.infisical_requests import InfisicalRequests
-from infisical_sdk.api_types import ListSecretsResponse, SingleSecretResponse, BaseSecret
-from infisical_sdk.util import SecretsCache
+from hanzo_kms.kms_requests import KMSRequests
+from hanzo_kms.api_types import ListSecretsResponse, SingleSecretResponse, BaseSecret
+from hanzo_kms.util import SecretsCache
 
 CACHE_KEY_LIST_SECRETS = "cache-list-secrets"
 CACHE_KEY_SINGLE_SECRET = "cache-single-secret"
 
 class V3RawSecrets:
-    def __init__(self, requests: InfisicalRequests, cache: SecretsCache) -> None:
+    def __init__(self, requests: KMSRequests, cache: SecretsCache) -> None:
         self.requests = requests
         self.cache = cache
 
@@ -41,7 +41,7 @@ class V3RawSecrets:
         if tag_filters:
             params["tagSlugs"] = ",".join(tag_filters)
 
-        
+
         cache_key = self.cache.compute_cache_key(CACHE_KEY_LIST_SECRETS, **params)
         if self.cache.enabled:
           cached_response = self.cache.get(cache_key)

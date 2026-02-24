@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "infisicalapi_client"
+name = "hanzokms"
 version = "1.0.0"
-description = "Infisical API"
-authors = ["OpenAPI Generator Community <team@openapitools.org>"]
-license = "NoLicense"
+description = "Official Hanzo KMS Python SDK"
+authors = ["Hanzo AI Inc. <support@hanzo.ai>"]
+license = "MIT"
 readme = "README.md"
-repository = "https://github.com/GIT_USER_ID/GIT_REPO_ID"
-keywords = ["OpenAPI", "OpenAPI-Generator", "Infisical API"]
-include = ["infisicalapi_client/py.typed"]
+repository = "https://github.com/hanzokms/python-sdk"
+keywords = ["Hanzo", "KMS", "Secrets Management", "SDK"]
+include = ["hanzo_kms/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.7"

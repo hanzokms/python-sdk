@@ -1,7 +1,7 @@
 from typing import Optional, Dict, Any, List, Union
 
-from infisical_sdk.infisical_requests import InfisicalRequests
-from infisical_sdk.api_types import (
+from hanzo_kms.kms_requests import KMSRequests
+from hanzo_kms.api_types import (
     DynamicSecret,
     DynamicSecretLease,
     DynamicSecretProviders,
@@ -14,7 +14,7 @@ from infisical_sdk.api_types import (
 class DynamicSecretLeases:
     """Manages dynamic secret leases."""
 
-    def __init__(self, requests: InfisicalRequests) -> None:
+    def __init__(self, requests: KMSRequests) -> None:
         self.requests = requests
 
     def create(
@@ -66,7 +66,7 @@ class DynamicSecretLeases:
             project_slug: The slug of the project.
             environment_slug: The slug of the environment.
             path: The path to the dynamic secret. Defaults to "/".
-            is_forced: A boolean flag to delete the the dynamic secret from Infisical without trying to remove it from external provider. Used when the dynamic secret got modified externally.
+            is_forced: A boolean flag to delete the dynamic secret from KMS without trying to remove it from the external provider. Used when the dynamic secret got modified externally.
 
         Returns:
             The revoked lease.
@@ -153,9 +153,9 @@ class DynamicSecretLeases:
 
 
 class DynamicSecrets:
-    """Manages dynamic secrets in Infisical."""
+    """Manages dynamic secrets in Hanzo KMS."""
 
-    def __init__(self, requests: InfisicalRequests) -> None:
+    def __init__(self, requests: KMSRequests) -> None:
         self.requests = requests
         self.leases = DynamicSecretLeases(requests)
 
@@ -175,7 +175,7 @@ class DynamicSecrets:
         Args:
             name: The name of the dynamic secret.
             provider_type: The provider type (e.g., DynamicSecretProviders.SQL_DATABASE).
-            inputs: The provider-specific configuration inputs. Check the Infisical documentation for the specific provider for the inputs: https://infisical.com/docs/api-reference/endpoints/dynamic-secrets/create#body-provider
+            inputs: The provider-specific configuration inputs.
             default_ttl: The default time to live for leases (e.g., "1h", "30m").
             max_ttl: The maximum time to live for leases (e.g., "24h").
             project_slug: The slug of the project.
@@ -224,7 +224,7 @@ class DynamicSecrets:
             project_slug: The slug of the project.
             environment_slug: The slug of the environment.
             path: The path to the dynamic secret. Defaults to "/".
-            is_forced: A boolean flag to delete the the dynamic secret from Infisical without trying to remove it from external provider. Used when the dynamic secret got modified externally.
+            is_forced: A boolean flag to delete the dynamic secret from KMS without trying to remove it from the external provider. Used when the dynamic secret got modified externally.
 
         Returns:
             The deleted dynamic secret.
@@ -332,4 +332,3 @@ class DynamicSecrets:
         )
 
         return result.data.dynamicSecret
-

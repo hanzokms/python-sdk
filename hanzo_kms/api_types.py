@@ -61,7 +61,7 @@ class SecretTag(BaseModel):
 
 @dataclass
 class BaseSecret(BaseModel):
-    """Infisical Secret"""
+    """KMS Secret"""
     id: str
     _id: str
     workspace: str
@@ -144,7 +144,7 @@ class KmsKeysOrderBy(str, Enum):
 
 @dataclass
 class KmsKey(BaseModel):
-    """Infisical KMS Key"""
+    """KMS Key"""
     id: str
     description: str
     isDisabled: bool
@@ -320,7 +320,7 @@ class DynamicSecretProviders(str, Enum):
 
 @dataclass
 class DynamicSecret(BaseModel):
-    """Infisical Dynamic Secret"""
+    """Dynamic Secret"""
     id: str
     name: str
     version: int
@@ -349,7 +349,7 @@ class SingleDynamicSecretResponse(BaseModel):
 
 @dataclass
 class DynamicSecretLease(BaseModel):
-    """Infisical Dynamic Secret Lease"""
+    """Dynamic Secret Lease"""
     id: str
     expireAt: str
     createdAt: str
