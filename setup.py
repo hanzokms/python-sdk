@@ -14,7 +14,7 @@ from setuptools import setup, find_packages  # noqa: H301
 #
 # prerequisite: setuptools
 # http://pypi.python.org/pypi/setuptools
-NAME = "hanzokms"
+NAME = "hanzo-kms-sdk"
 VERSION = "1.0.1"
 PYTHON_REQUIRES = ">=3.8"
 REQUIRES = [
