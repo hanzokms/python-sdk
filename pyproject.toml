@@ -10,7 +10,7 @@ keywords = ["Hanzo", "KMS", "Secrets Management", "SDK"]
 include = ["hanzo_kms/py.typed"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = ">=3.14"
 
 python-dateutil = ">=2.8.2"
 aenum = ">=3.1.11"
