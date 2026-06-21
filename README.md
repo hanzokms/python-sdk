@@ -5,7 +5,7 @@ Official Python SDK for [Hanzo KMS](https://kms.hanzo.ai) -- secrets management,
 ## Installation
 
 ```bash
-pip install hanzokms
+pip install hanzo-kms
 ```
 
 ## Quick Start
@@ -74,7 +74,7 @@ with KMSClient(host="https://kms.hanzo.ai", token="your-token") as client:
 
 ## License
 
-MIT -- Copyright (c) 2025 Hanzo AI Inc.
+BSD-3-Clause -- Copyright (c) 2025-2026 Hanzo AI, Inc. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
 
 ## Security
 

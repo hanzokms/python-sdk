@@ -14,7 +14,7 @@ from setuptools import setup, find_packages  # noqa: H301
 #
 # prerequisite: setuptools
 # http://pypi.python.org/pypi/setuptools
-NAME = "hanzo-kms-sdk"
+NAME = "hanzo-kms"
 VERSION = "1.0.1"
 PYTHON_REQUIRES = ">=3.8"
 REQUIRES = [
@@ -29,9 +29,10 @@ setup(
     name=NAME,
     version=VERSION,
     description="Official Hanzo KMS Python SDK",
-    author="Hanzo AI Inc.",
+    author="Hanzo AI, Inc.",
     author_email="support@hanzo.ai",
     url="https://github.com/hanzokms/python-sdk",
+    license="BSD-3-Clause",
     keywords=["Hanzo", "KMS", "Hanzo KMS", "SDK", "Secrets Management"],
     install_requires=REQUIRES,
     packages=find_packages(exclude=["test", "tests"]),
