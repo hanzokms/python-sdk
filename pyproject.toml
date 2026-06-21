@@ -1,9 +1,9 @@
 [tool.poetry]
-name = "hanzokms"
+name = "hanzo-kms"
 version = "1.0.0"
 description = "Official Hanzo KMS Python SDK"
-authors = ["Hanzo AI Inc. <support@hanzo.ai>"]
-license = "MIT"
+authors = ["Hanzo AI, Inc. <support@hanzo.ai>"]
+license = "BSD-3-Clause"
 readme = "README.md"
 repository = "https://github.com/hanzokms/python-sdk"
 keywords = ["Hanzo", "KMS", "Secrets Management", "SDK"]
