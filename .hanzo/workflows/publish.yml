@@ -32,7 +32,7 @@ concurrency:
 
 jobs:
   publish:
-    runs-on: hanzo-build-linux-amd64
+    runs-on: hanzokms-build-linux-amd64
     steps:
       - uses: actions/checkout@v4
 
@@ -56,7 +56,8 @@ jobs:
       - name: Publish if the tree is ahead of PyPI
         env:
           TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+          KMS_CLIENT_ID: ${{ secrets.KMS_CLIENT_ID }}
+          KMS_CLIENT_SECRET: ${{ secrets.KMS_CLIENT_SECRET }}
         run: |
           NAME=$(sed -n 's/^NAME *= *"\(.*\)"/\1/p' setup.py)
           NEW=$(sed -n 's/^VERSION *= *"\(.*\)"/\1/p' setup.py)
@@ -75,13 +76,32 @@ jobs:
             exit 0
           fi
 
-          # Said here, by name, or not at all. An empty token reaches PyPI as a
-          # 403 naming no secret and no org, which reads as a broken release
-          # rather than an unregistered credential.
-          [ -n "$TWINE_PASSWORD" ] || {
-            echo "::error::PYPI_API_TOKEN is not registered for this repo (org hanzokms). PyPI wants a project-scoped API token."
+          # Only the KMS machine identity lives as a forge secret. A raw
+          # PYPI_API_TOKEN beside it would be a second place to hold one thing,
+          # and the one that rots silently — nothing reads it until a release
+          # day, which is the worst day to discover it expired.
+          if [ -z "$KMS_CLIENT_ID" ] || [ -z "$KMS_CLIENT_SECRET" ]; then
+            echo "::error::KMS machine identity absent — cannot pull the PyPI credential. Seed KMS_CLIENT_ID/KMS_CLIENT_SECRET as git.hanzo.ai Actions secrets (org or repo scope)." >&2
             exit 1
-          }
+          fi
+          KMS=https://kms.hanzo.ai; ENVN=prod
+          KT=$(curl -sf "$KMS/v1/kms/auth/login" -H 'Content-Type: application/json' \
+            -d "{\"clientId\":\"$KMS_CLIENT_ID\",\"clientSecret\":\"$KMS_CLIENT_SECRET\"}" | jq -r .accessToken)
+          [ -n "$KT" ] && [ "$KT" != null ] || { echo "::error::KMS login failed"; exit 1; }
+          # The org is the token's owner claim, not a path segment, so the read
+          # names only the secret.
+          URL="$KMS/v1/kms/secrets/PYPI_API_TOKEN?env=$ENVN"
+          # No -f: a `curl -sf` on a 404 exits 22 and kills the step before any
+          # message of ours prints, which reads like a broken network.
+          BODY=$(curl -s -w '\n%{http_code}' "$URL" -H "Authorization: Bearer $KT") || true
+          CODE=$(printf '%s' "$BODY" | tail -1)
+          TWINE_PASSWORD=$(printf '%s' "$BODY" | sed '$d' | jq -r '.value // empty' 2>/dev/null || true)
+          if [ -z "$TWINE_PASSWORD" ]; then
+            echo "::error::KMS returned HTTP $CODE for $URL with no value — seed PYPI_API_TOKEN there, not as a forge secret." >&2
+            exit 1
+          fi
+          echo "::add-mask::$TWINE_PASSWORD"
+          export TWINE_PASSWORD
 
           # dist/ already exists from the gate above.
           echo "Publishing $NAME $OLD -> $NEW"
