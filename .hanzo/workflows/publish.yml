@@ -1,0 +1,77 @@
+name: Publish
+
+# The one thing here allowed to reach PyPI.
+#
+# What this replaces could not run: it lived in `.github/workflows`, which the
+# forge does not read, and asked for `ubuntu-latest`, which nothing here
+# advertises. It was also waiting on a tag, and a tag is a step people skip.
+#
+# No `paths:` filter, deliberately. The question is "does PyPI serve something
+# older than this tree?", and the comparison below is the only thing that reads
+# the truth. A path gate guesses it from the shape of a diff, so a packaging-only
+# fix to a failed release matches no path and cannot re-run the job it repaired.
+# With no gate this is idempotent by construction, which is also what makes the
+# manual dispatch safe.
+#
+# NOTE: `setup.py` and `pyproject.toml` currently disagree (1.0.1 vs 1.0.0) and
+# PyPI is ahead of both at 1.1.1, so this publishes nothing until one of them is
+# made the single source and moved past the registry. That is the guard working
+# rather than a fault: forward-only means a tree behind the index cannot walk it
+# backwards. `setup.py` is read here because it is what the build consumes.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Serialized, newest wins. Two builds in flight both read PyPI before either
+# uploads, so both would see the same version as absent and the slower one would
+# ship a stale tree under a version that can never be replaced.
+concurrency:
+  group: publish
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: hanzo-build-linux-amd64
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: python -m pip install --upgrade build twine
+
+      - name: Publish if the tree is ahead of PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          NAME=$(sed -n 's/^NAME *= *"\(.*\)"/\1/p' setup.py)
+          NEW=$(sed -n 's/^VERSION *= *"\(.*\)"/\1/p' setup.py)
+          [ -n "$NAME" ] && [ -n "$NEW" ] || { echo "::error::could not read NAME/VERSION from setup.py"; exit 1; }
+
+          OLD=$(curl -sf "https://pypi.org/pypi/${NAME}/json" \
+                  | python3 -c "import sys,json; print(json.load(sys.stdin)['info']['version'])" 2>/dev/null || echo "0.0.0")
+
+          # FORWARD ONLY. `!=` fires in both directions and a revert would walk
+          # PyPI backwards; only a strictly greater local version is a release.
+          # Asking PyPI rather than the previous commit also survives a merge
+          # whose first parent already carries the bump.
+          NEWEST=$(printf '%s\n%s\n' "$OLD" "$NEW" | sort -V | tail -1)
+          if [ "$OLD" = "$NEW" ] || [ "$NEWEST" != "$NEW" ]; then
+            echo "PyPI serves $OLD; tree is $NEW — nothing to publish."
+            exit 0
+          fi
+
+          # Said here, by name, or not at all. An empty token reaches PyPI as a
+          # 403 naming no secret and no org, which reads as a broken release
+          # rather than an unregistered credential.
+          [ -n "$TWINE_PASSWORD" ] || {
+            echo "::error::PYPI_API_TOKEN is not registered for this repo (org hanzokms). PyPI wants a project-scoped API token."
+            exit 1
+          }
+
+          echo "Publishing $NAME $OLD -> $NEW"
+          python -m build
+          twine upload dist/*
