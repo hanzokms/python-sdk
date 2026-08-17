@@ -40,7 +40,18 @@ jobs:
         with:
           python-version: '3.12'
 
-      - run: python -m pip install --upgrade build twine
+      - run: python -m pip install --upgrade build twine flake8
+
+      # Every push, not just a releasing one. Building only inside the publish
+      # branch means a push that does not bump the version never builds at all,
+      # so a packaging regression stays invisible until release day — the one
+      # day it is most expensive. There are no tests to run here (the inherited
+      # workflow says so and its pytest step is commented out), so the build and
+      # a syntax pass are the whole gate, honestly stated rather than dressed up.
+      - name: Build and check
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          python -m build
 
       - name: Publish if the tree is ahead of PyPI
         env:
@@ -72,6 +83,6 @@ jobs:
             exit 1
           }
 
+          # dist/ already exists from the gate above.
           echo "Publishing $NAME $OLD -> $NEW"
-          python -m build
           twine upload dist/*
