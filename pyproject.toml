@@ -1,25 +1,10 @@
-[tool.poetry]
-name = "hanzo-kms"
-version = "1.0.0"
-description = "Official Hanzo KMS Python SDK"
-authors = ["Hanzo AI, Inc. <support@hanzo.ai>"]
-license = "BSD-3-Clause"
-readme = "README.md"
-repository = "https://github.com/hanzokms/python-sdk"
-keywords = ["Hanzo", "KMS", "Secrets Management", "SDK"]
-include = ["hanzo_kms/py.typed"]
-
-[tool.poetry.dependencies]
-python = ">=3.14"
-
-python-dateutil = ">=2.8.2"
-aenum = ">=3.1.11"
-
-[tool.poetry.dev-dependencies]
-pytest = ">=7.2.1"
-tox = ">=3.9.0"
-flake8 = ">=4.0.0"
-
+# Build only. Package metadata lives in setup.py, which is what
+# setuptools.build_meta reads — the [tool.poetry] table that used to sit here
+# was read by nothing (no workflow, script or Makefile in this repo invokes
+# poetry) and disagreed with setup.py on the two facts that matter: it named
+# version 1.0.0 against setup.py's 1.0.1, and python >=3.14 against >=3.8. A
+# second set of metadata that no build consults is a second answer to every
+# question and the one a reader is more likely to find first.
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
